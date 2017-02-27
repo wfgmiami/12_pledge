@@ -3,9 +3,45 @@
 Promises Workshop: build the pledge.js ES6-style promise library
 ----------------------------------------------------------------*/
 // YOUR CODE HERE:
+class $Promise{
+  constructor(executor){
+    this._state = 'pending';
+    this._value;
+
+    if (executor){
+      var that = this;
+      var resolve = function(arg){
+        that._internalResolve(arg)
+      };
+
+      var reject = function(arg){
+        that._internalReject(arg)
+      };
+
+      executor(resolve, reject);
+    }
+
+  }
+
+  _internalResolve(data){
+
+    if(this._state === 'pending'){
+      this._state = 'fulfilled';
+      this._value = data;
+    }
 
 
+  }
 
+  _internalReject(reason){
+    if(this._state === 'pending'){
+      this._state = 'rejected';
+      this._value = reason;
+    }
+
+  }
+
+}
 
 
 
