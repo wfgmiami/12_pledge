@@ -7,6 +7,7 @@ class $Promise{
   constructor(executor){
     this._state = 'pending';
     this._value;
+    this._handlerGroups = [];
 
     if (executor){
       var that = this;
@@ -20,17 +21,14 @@ class $Promise{
 
       executor(resolve, reject);
     }
-
   }
 
   _internalResolve(data){
-
     if(this._state === 'pending'){
       this._state = 'fulfilled';
       this._value = data;
+      this._callHandlers();
     }
-
-
   }
 
   _internalReject(reason){
@@ -38,7 +36,36 @@ class $Promise{
       this._state = 'rejected';
       this._value = reason;
     }
+  }
 
+
+  _callHandlers(){
+      var index = this._handlerGroups.length;
+
+      if(this._state === 'fulfilled' && index > 0){
+        for (var i = 0; i < index; i++){
+          this._handlerGroups[i].successCb(this._value);
+        }
+      }
+
+  }
+
+  then(success, error){
+
+    var index =  this._handlerGroups.length;
+
+    if (typeof success !== 'function') success = null;
+    if (typeof error !== 'function') error = null;
+
+    this._handlerGroups[index] = {
+      successCb: success,
+      errorCb: error
+    }
+
+    //this._callHandlers();
+    if(this._state === 'fulfilled'){
+      this._handlerGroups[index].successCb(this._value);
+    }
   }
 
 }
