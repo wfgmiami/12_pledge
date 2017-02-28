@@ -35,6 +35,7 @@ class $Promise{
     if(this._state === 'pending'){
       this._state = 'rejected';
       this._value = reason;
+      this._callHandlers();
     }
   }
 
@@ -46,6 +47,12 @@ class $Promise{
         for (var i = 0; i < index; i++){
           this._handlerGroups[i].successCb(this._value);
         }
+        this._handlerGroups=[];
+      }else if(this._state === 'rejected' && index > 0){
+        for (var i = 0; i < index; i++){
+          this._handlerGroups[i].errorCb(this._value);
+        }
+        this._handlerGroups=[];
       }
 
   }
@@ -65,7 +72,16 @@ class $Promise{
     //this._callHandlers();
     if(this._state === 'fulfilled'){
       this._handlerGroups[index].successCb(this._value);
+      this._handlerGroups=[];
     }
+    if(this._state === 'rejected' && error !== null){
+      this._handlerGroups[index].errorCb(this._value);
+      this._handlerGroups=[];
+    }
+  }
+
+  catch(error){
+    this.then(null, error);
   }
 
 }
