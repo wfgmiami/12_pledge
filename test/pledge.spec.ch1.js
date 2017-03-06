@@ -269,7 +269,7 @@ describe('The executor function', function(){
       expect( promise._value ).toBe( 'Stupefy!' );
     });
 
-    it('is indistinguishable in behavior from `._internalReject`', function () {
+    xit('is indistinguishable in behavior from `._internalReject`', function () {
       var rejector;
       var promise = new $Promise(function (resolve, reject) {
         reject('You must unlearn what you have learned.');
@@ -288,7 +288,7 @@ describe('The executor function', function(){
 
   // This part should pass if you did the above correctly. Follow the logic:
 
-  it('therefore allows the *creator* of a new promise to control its fate, even asynchronously!', function (done) {
+  xit('therefore allows the *creator* of a new promise to control its fate, even asynchronously!', function (done) {
 
     var promise3 = new $Promise(function (resolve) {
       setTimeout(function runsInTheFuture () {

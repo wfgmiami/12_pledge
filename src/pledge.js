@@ -3,6 +3,14 @@
 Promises Workshop: build the pledge.js ES6-style promise library
 ----------------------------------------------------------------*/
 // YOUR CODE HERE:
+// var $Promise = function(executor){
+//     this._state = 'pending';
+//     this._value;
+//     this._handlerGroups = [];
+
+// }
+
+
 class $Promise{
   constructor(executor){
     this._state = 'pending';
@@ -10,15 +18,15 @@ class $Promise{
     this._handlerGroups = [];
 
     if (executor){
-      var that = this;
-      var resolve = function(arg){
-        that._internalResolve(arg)
+      //var that = this;
+      var resolve = (arg)=>{
+        console.log('.....................//////////////')
+        this._internalResolve(arg)
       };
 
-      var reject = function(arg){
-        that._internalReject(arg)
+      var reject = (arg)=>{
+        this._internalReject(arg)
       };
-
       executor(resolve, reject);
     }
   }
@@ -41,13 +49,28 @@ class $Promise{
 
 
   _callHandlers(){
-      var index = this._handlerGroups.length;
 
+      var index = this._handlerGroups.length;
+      //console.log(this.resolve);
+      // this._handlerGroups[index - 1].downstreamPromise.then(function(res){
+      //     console.log(res);
+      // })
+      // var promise = new $Promise(function(resolve,reject){
+      //   resolve(10);
+      // })
+
+
+
+
+
+//this._handlerGroups[index - 1].downstreamPromise._state = 'fulfilled';
+//this._handlerGroups[index - 1].downstreamPromise._value = 9001;
       if(this._state === 'fulfilled' && index > 0){
         for (var i = 0; i < index; i++){
           this._handlerGroups[i].successCb(this._value);
         }
         this._handlerGroups=[];
+
       }else if(this._state === 'rejected' && index > 0){
         for (var i = 0; i < index; i++){
           this._handlerGroups[i].errorCb(this._value);
@@ -60,7 +83,6 @@ class $Promise{
   then(success, error){
 
     var index =  this._handlerGroups.length;
-
     if (typeof success !== 'function') success = null;
     if (typeof error !== 'function') error = null;
 
@@ -69,15 +91,23 @@ class $Promise{
       errorCb: error
     }
 
-    //this._callHandlers();
+    if (arguments.length === 0){
+
+      this._handlerGroups[index].downstreamPromise = new $Promise();
+
+      return this._handlerGroups[index].downstreamPromise;
+    }
+
     if(this._state === 'fulfilled'){
       this._handlerGroups[index].successCb(this._value);
       this._handlerGroups=[];
+
     }
     if(this._state === 'rejected' && error !== null){
       this._handlerGroups[index].errorCb(this._value);
       this._handlerGroups=[];
     }
+
   }
 
   catch(error){
